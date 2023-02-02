@@ -1,0 +1,7 @@
+{
+  "GoogleOptions": {
+    "CredentialsPath": "./credentials.json",
+    "TokenPath": "./token.json",
+    "ApplicationName":"Google Calendar API .NET Quickstart"
+  }
+}
