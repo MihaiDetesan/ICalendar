@@ -42,7 +42,11 @@
             this.monthCalendar11 = new Pabo.Calendar.MonthCalendar();
             this.monthCalendar12 = new Pabo.Calendar.MonthCalendar();
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
+            this.panel1 = new System.Windows.Forms.Panel();
+            this.flowLayoutPanel1 = new System.Windows.Forms.FlowLayoutPanel();
+            this.holidayDays = new System.Windows.Forms.Label();
             this.tableLayoutPanel1.SuspendLayout();
+            this.panel1.SuspendLayout();
             this.SuspendLayout();
             // 
             // dateItem1
@@ -87,7 +91,7 @@
             this.monthCalendar1.SelectTrailingDates = false;
             this.monthCalendar1.ShowFooter = false;
             this.monthCalendar1.ShowTrailingDates = false;
-            this.monthCalendar1.Size = new System.Drawing.Size(326, 253);
+            this.monthCalendar1.Size = new System.Drawing.Size(315, 250);
             this.monthCalendar1.TabIndex = 0;
             this.monthCalendar1.Weekdays.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F);
             this.monthCalendar1.Weeknumbers.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F);
@@ -105,7 +109,7 @@
             this.monthCalendar2.Header.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold);
             this.monthCalendar2.Header.TextColor = System.Drawing.Color.White;
             this.monthCalendar2.ImageList = null;
-            this.monthCalendar2.Location = new System.Drawing.Point(335, 3);
+            this.monthCalendar2.Location = new System.Drawing.Point(324, 3);
             this.monthCalendar2.MaxDate = new System.DateTime(2033, 1, 23, 15, 2, 45, 692);
             this.monthCalendar2.MinDate = new System.DateTime(2013, 1, 23, 15, 2, 45, 692);
             this.monthCalendar2.Month.BackgroundImage = null;
@@ -115,7 +119,7 @@
             this.monthCalendar2.SelectTrailingDates = false;
             this.monthCalendar2.ShowFooter = false;
             this.monthCalendar2.ShowTrailingDates = false;
-            this.monthCalendar2.Size = new System.Drawing.Size(326, 253);
+            this.monthCalendar2.Size = new System.Drawing.Size(315, 250);
             this.monthCalendar2.TabIndex = 1;
             this.monthCalendar2.Weekdays.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F);
             this.monthCalendar2.Weeknumbers.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F);
@@ -133,7 +137,7 @@
             this.monthCalendar3.Header.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold);
             this.monthCalendar3.Header.TextColor = System.Drawing.Color.White;
             this.monthCalendar3.ImageList = null;
-            this.monthCalendar3.Location = new System.Drawing.Point(667, 3);
+            this.monthCalendar3.Location = new System.Drawing.Point(645, 3);
             this.monthCalendar3.MaxDate = new System.DateTime(2033, 1, 23, 15, 2, 45, 692);
             this.monthCalendar3.MinDate = new System.DateTime(2013, 1, 23, 15, 2, 45, 692);
             this.monthCalendar3.Month.BackgroundImage = null;
@@ -143,7 +147,7 @@
             this.monthCalendar3.SelectTrailingDates = false;
             this.monthCalendar3.ShowFooter = false;
             this.monthCalendar3.ShowTrailingDates = false;
-            this.monthCalendar3.Size = new System.Drawing.Size(326, 253);
+            this.monthCalendar3.Size = new System.Drawing.Size(315, 250);
             this.monthCalendar3.TabIndex = 2;
             this.monthCalendar3.Weekdays.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F);
             this.monthCalendar3.Weeknumbers.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F);
@@ -161,7 +165,7 @@
             this.monthCalendar4.Header.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold);
             this.monthCalendar4.Header.TextColor = System.Drawing.Color.White;
             this.monthCalendar4.ImageList = null;
-            this.monthCalendar4.Location = new System.Drawing.Point(999, 3);
+            this.monthCalendar4.Location = new System.Drawing.Point(966, 3);
             this.monthCalendar4.MaxDate = new System.DateTime(2033, 1, 23, 15, 2, 45, 692);
             this.monthCalendar4.MinDate = new System.DateTime(2013, 1, 23, 15, 2, 45, 692);
             this.monthCalendar4.Month.BackgroundImage = null;
@@ -171,7 +175,7 @@
             this.monthCalendar4.SelectTrailingDates = false;
             this.monthCalendar4.ShowFooter = false;
             this.monthCalendar4.ShowTrailingDates = false;
-            this.monthCalendar4.Size = new System.Drawing.Size(328, 253);
+            this.monthCalendar4.Size = new System.Drawing.Size(318, 250);
             this.monthCalendar4.TabIndex = 3;
             this.monthCalendar4.Weekdays.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F);
             this.monthCalendar4.Weeknumbers.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F);
@@ -189,7 +193,7 @@
             this.monthCalendar5.Header.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold);
             this.monthCalendar5.Header.TextColor = System.Drawing.Color.White;
             this.monthCalendar5.ImageList = null;
-            this.monthCalendar5.Location = new System.Drawing.Point(3, 262);
+            this.monthCalendar5.Location = new System.Drawing.Point(3, 259);
             this.monthCalendar5.MaxDate = new System.DateTime(2033, 1, 23, 15, 2, 45, 692);
             this.monthCalendar5.MinDate = new System.DateTime(2013, 1, 23, 15, 2, 45, 692);
             this.monthCalendar5.Month.BackgroundImage = null;
@@ -199,7 +203,7 @@
             this.monthCalendar5.SelectTrailingDates = false;
             this.monthCalendar5.ShowFooter = false;
             this.monthCalendar5.ShowTrailingDates = false;
-            this.monthCalendar5.Size = new System.Drawing.Size(326, 253);
+            this.monthCalendar5.Size = new System.Drawing.Size(315, 250);
             this.monthCalendar5.TabIndex = 4;
             this.monthCalendar5.Weekdays.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F);
             this.monthCalendar5.Weeknumbers.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F);
@@ -217,7 +221,7 @@
             this.monthCalendar6.Header.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold);
             this.monthCalendar6.Header.TextColor = System.Drawing.Color.White;
             this.monthCalendar6.ImageList = null;
-            this.monthCalendar6.Location = new System.Drawing.Point(335, 262);
+            this.monthCalendar6.Location = new System.Drawing.Point(324, 259);
             this.monthCalendar6.MaxDate = new System.DateTime(2033, 1, 23, 15, 2, 45, 692);
             this.monthCalendar6.MinDate = new System.DateTime(2013, 1, 23, 15, 2, 45, 692);
             this.monthCalendar6.Month.BackgroundImage = null;
@@ -227,7 +231,7 @@
             this.monthCalendar6.SelectTrailingDates = false;
             this.monthCalendar6.ShowFooter = false;
             this.monthCalendar6.ShowTrailingDates = false;
-            this.monthCalendar6.Size = new System.Drawing.Size(326, 253);
+            this.monthCalendar6.Size = new System.Drawing.Size(315, 250);
             this.monthCalendar6.TabIndex = 5;
             this.monthCalendar6.Weekdays.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F);
             this.monthCalendar6.Weeknumbers.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F);
@@ -245,7 +249,7 @@
             this.monthCalendar7.Header.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold);
             this.monthCalendar7.Header.TextColor = System.Drawing.Color.White;
             this.monthCalendar7.ImageList = null;
-            this.monthCalendar7.Location = new System.Drawing.Point(667, 262);
+            this.monthCalendar7.Location = new System.Drawing.Point(645, 259);
             this.monthCalendar7.MaxDate = new System.DateTime(2033, 1, 23, 15, 2, 45, 692);
             this.monthCalendar7.MinDate = new System.DateTime(2013, 1, 23, 15, 2, 45, 692);
             this.monthCalendar7.Month.BackgroundImage = null;
@@ -255,7 +259,7 @@
             this.monthCalendar7.SelectTrailingDates = false;
             this.monthCalendar7.ShowFooter = false;
             this.monthCalendar7.ShowTrailingDates = false;
-            this.monthCalendar7.Size = new System.Drawing.Size(326, 253);
+            this.monthCalendar7.Size = new System.Drawing.Size(315, 250);
             this.monthCalendar7.TabIndex = 6;
             this.monthCalendar7.Weekdays.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F);
             this.monthCalendar7.Weeknumbers.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F);
@@ -273,7 +277,7 @@
             this.monthCalendar8.Header.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold);
             this.monthCalendar8.Header.TextColor = System.Drawing.Color.White;
             this.monthCalendar8.ImageList = null;
-            this.monthCalendar8.Location = new System.Drawing.Point(999, 262);
+            this.monthCalendar8.Location = new System.Drawing.Point(966, 259);
             this.monthCalendar8.MaxDate = new System.DateTime(2033, 1, 23, 15, 2, 45, 692);
             this.monthCalendar8.MinDate = new System.DateTime(2013, 1, 23, 15, 2, 45, 692);
             this.monthCalendar8.Month.BackgroundImage = null;
@@ -283,7 +287,7 @@
             this.monthCalendar8.SelectTrailingDates = false;
             this.monthCalendar8.ShowFooter = false;
             this.monthCalendar8.ShowTrailingDates = false;
-            this.monthCalendar8.Size = new System.Drawing.Size(328, 253);
+            this.monthCalendar8.Size = new System.Drawing.Size(318, 250);
             this.monthCalendar8.TabIndex = 7;
             this.monthCalendar8.Weekdays.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F);
             this.monthCalendar8.Weeknumbers.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F);
@@ -301,7 +305,7 @@
             this.monthCalendar9.Header.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold);
             this.monthCalendar9.Header.TextColor = System.Drawing.Color.White;
             this.monthCalendar9.ImageList = null;
-            this.monthCalendar9.Location = new System.Drawing.Point(3, 521);
+            this.monthCalendar9.Location = new System.Drawing.Point(3, 515);
             this.monthCalendar9.MaxDate = new System.DateTime(2033, 1, 23, 15, 2, 45, 692);
             this.monthCalendar9.MinDate = new System.DateTime(2013, 1, 23, 15, 2, 45, 692);
             this.monthCalendar9.Month.BackgroundImage = null;
@@ -311,7 +315,7 @@
             this.monthCalendar9.SelectTrailingDates = false;
             this.monthCalendar9.ShowFooter = false;
             this.monthCalendar9.ShowTrailingDates = false;
-            this.monthCalendar9.Size = new System.Drawing.Size(326, 255);
+            this.monthCalendar9.Size = new System.Drawing.Size(315, 252);
             this.monthCalendar9.TabIndex = 11;
             this.monthCalendar9.Weekdays.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F);
             this.monthCalendar9.Weeknumbers.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F);
@@ -329,7 +333,7 @@
             this.monthCalendar10.Header.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold);
             this.monthCalendar10.Header.TextColor = System.Drawing.Color.White;
             this.monthCalendar10.ImageList = null;
-            this.monthCalendar10.Location = new System.Drawing.Point(335, 521);
+            this.monthCalendar10.Location = new System.Drawing.Point(324, 515);
             this.monthCalendar10.MaxDate = new System.DateTime(2033, 1, 23, 15, 2, 45, 692);
             this.monthCalendar10.MinDate = new System.DateTime(2013, 1, 23, 15, 2, 45, 692);
             this.monthCalendar10.Month.BackgroundImage = null;
@@ -339,7 +343,7 @@
             this.monthCalendar10.SelectTrailingDates = false;
             this.monthCalendar10.ShowFooter = false;
             this.monthCalendar10.ShowTrailingDates = false;
-            this.monthCalendar10.Size = new System.Drawing.Size(326, 255);
+            this.monthCalendar10.Size = new System.Drawing.Size(315, 252);
             this.monthCalendar10.TabIndex = 10;
             this.monthCalendar10.Weekdays.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F);
             this.monthCalendar10.Weeknumbers.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F);
@@ -357,7 +361,7 @@
             this.monthCalendar11.Header.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold);
             this.monthCalendar11.Header.TextColor = System.Drawing.Color.White;
             this.monthCalendar11.ImageList = null;
-            this.monthCalendar11.Location = new System.Drawing.Point(667, 521);
+            this.monthCalendar11.Location = new System.Drawing.Point(645, 515);
             this.monthCalendar11.MaxDate = new System.DateTime(2033, 1, 23, 15, 2, 45, 692);
             this.monthCalendar11.MinDate = new System.DateTime(2013, 1, 23, 15, 2, 45, 692);
             this.monthCalendar11.Month.BackgroundImage = null;
@@ -367,7 +371,7 @@
             this.monthCalendar11.SelectTrailingDates = false;
             this.monthCalendar11.ShowFooter = false;
             this.monthCalendar11.ShowTrailingDates = false;
-            this.monthCalendar11.Size = new System.Drawing.Size(326, 255);
+            this.monthCalendar11.Size = new System.Drawing.Size(315, 252);
             this.monthCalendar11.TabIndex = 9;
             this.monthCalendar11.Weekdays.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F);
             this.monthCalendar11.Weeknumbers.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F);
@@ -387,7 +391,7 @@
             this.monthCalendar12.Header.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold);
             this.monthCalendar12.Header.TextColor = System.Drawing.Color.White;
             this.monthCalendar12.ImageList = null;
-            this.monthCalendar12.Location = new System.Drawing.Point(999, 521);
+            this.monthCalendar12.Location = new System.Drawing.Point(966, 515);
             this.monthCalendar12.MaxDate = new System.DateTime(2033, 1, 23, 15, 2, 45, 692);
             this.monthCalendar12.MinDate = new System.DateTime(2013, 1, 23, 15, 2, 45, 692);
             this.monthCalendar12.Month.BackgroundImage = null;
@@ -397,16 +401,15 @@
             this.monthCalendar12.SelectTrailingDates = false;
             this.monthCalendar12.ShowFooter = false;
             this.monthCalendar12.ShowTrailingDates = false;
-            this.monthCalendar12.Size = new System.Drawing.Size(328, 255);
+            this.monthCalendar12.Size = new System.Drawing.Size(318, 252);
             this.monthCalendar12.TabIndex = 8;
             this.monthCalendar12.Weekdays.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F);
             this.monthCalendar12.Weeknumbers.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F);
             // 
             // tableLayoutPanel1
             // 
-            this.tableLayoutPanel1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
+            this.tableLayoutPanel1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left)));
             this.tableLayoutPanel1.ColumnCount = 4;
             this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 25F));
             this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 25F));
@@ -430,21 +433,52 @@
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 33.33334F));
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 33.33334F));
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 33.33334F));
-            this.tableLayoutPanel1.Size = new System.Drawing.Size(1330, 779);
+            this.tableLayoutPanel1.Size = new System.Drawing.Size(1287, 770);
             this.tableLayoutPanel1.TabIndex = 12;
+            // 
+            // panel1
+            // 
+            this.panel1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.panel1.Controls.Add(this.holidayDays);
+            this.panel1.Controls.Add(this.flowLayoutPanel1);
+            this.panel1.Location = new System.Drawing.Point(12, 785);
+            this.panel1.Name = "panel1";
+            this.panel1.Size = new System.Drawing.Size(1287, 77);
+            this.panel1.TabIndex = 13;
+            // 
+            // flowLayoutPanel1
+            // 
+            this.flowLayoutPanel1.Location = new System.Drawing.Point(97, 0);
+            this.flowLayoutPanel1.Name = "flowLayoutPanel1";
+            this.flowLayoutPanel1.Size = new System.Drawing.Size(8, 8);
+            this.flowLayoutPanel1.TabIndex = 0;
+            // 
+            // holidayDays
+            // 
+            this.holidayDays.AutoSize = true;
+            this.holidayDays.Location = new System.Drawing.Point(13, 13);
+            this.holidayDays.Name = "holidayDays";
+            this.holidayDays.Size = new System.Drawing.Size(148, 16);
+            this.holidayDays.TabIndex = 1;
+            this.holidayDays.Text = "Commited holiday days";
             // 
             // YearCalendar
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.SystemColors.ActiveCaption;
-            this.ClientSize = new System.Drawing.Size(1340, 791);
+            this.ClientSize = new System.Drawing.Size(1337, 862);
+            this.Controls.Add(this.panel1);
             this.Controls.Add(this.tableLayoutPanel1);
             this.Margin = new System.Windows.Forms.Padding(4);
             this.MinimumSize = new System.Drawing.Size(1355, 829);
             this.Name = "YearCalendar";
             this.Text = "Form1";
             this.tableLayoutPanel1.ResumeLayout(false);
+            this.panel1.ResumeLayout(false);
+            this.panel1.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -464,6 +498,9 @@
         private Pabo.Calendar.MonthCalendar monthCalendar11;
         private Pabo.Calendar.MonthCalendar monthCalendar12;
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel1;
+        private System.Windows.Forms.Panel panel1;
+        private System.Windows.Forms.FlowLayoutPanel flowLayoutPanel1;
+        private System.Windows.Forms.Label holidayDays;
     }
 }
 

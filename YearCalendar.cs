@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 using Pabo.Calendar;
 
@@ -14,7 +15,6 @@ namespace ICalendar
         ContextMenuStrip cMenu;
         private GoogleCalendarImporter eventImporter;
         const int MonthsInAYear = 12;
-        int year = DateTime.Now.Year;
         Pabo.Calendar.MonthCalendar[] months;
 
         const string CredentialsPath = "./credentials.json";
@@ -45,33 +45,33 @@ namespace ICalendar
             cMenu = new ContextMenuStrip();
             cMenu.Opening += new System.ComponentModel.CancelEventHandler(cms_Opening);
 
-            for (int monthIdx = 1; monthIdx <= months.Length; monthIdx++)
+            for (int monthIdx = 0; monthIdx < months.Length; monthIdx++)
             {
-                var noOfDaysInMonth = DateTime.DaysInMonth(year, monthIdx);
-                months[monthIdx - 1].MinDate = new DateTime(year, monthIdx, 1);
-                months[monthIdx - 1].MaxDate = new DateTime(year, monthIdx, noOfDaysInMonth);
-                months[monthIdx - 1].ActiveMonth.Year = year;
-                months[monthIdx - 1].ActiveMonth.Month = monthIdx;
-                months[monthIdx - 1].ContextMenuStrip = cMenu;
-                months[monthIdx - 1].ShowToday = true;
-                months[monthIdx - 1].FirstDayOfWeek = 2;
-                months[monthIdx - 1].DayGotFocus += DayGotFocus;
-                months[monthIdx - 1].DayLostFocus += DayLostFocus;
-                months[monthIdx - 1].Header.BackColor1 = SystemColors.ActiveCaption;
-                months[monthIdx - 1].Header.TextColor = Color.Black;
-                months[monthIdx - 1].KeyboardEnabled = false;
-                months[monthIdx - 1].Weekdays.BackColor1 = SystemColors.ActiveCaption;
-                months[monthIdx - 1].Weekdays.TextColor = Color.Black;
-
-                months[monthIdx - 1].Month.Colors.BackColor1 = SystemColors.ActiveCaption;
-                months[monthIdx - 1].Month.Colors.Days.Text = Color.Black;
-                months[monthIdx - 1].Month.Colors.Days.BackColor1 = SystemColors.ActiveCaption;
+                var year = (int)((DateTime.Now.Month + monthIdx) / 13) + DateTime.Now.Year;
+                var month = (int)((DateTime.Now.Month + monthIdx) / 13) + ((DateTime.Now.Month + monthIdx) % 13);
+                var noOfDaysInMonth = DateTime.DaysInMonth(year, month);
+                months[monthIdx].MinDate = new DateTime(year, month, 1);
+                months[monthIdx].MaxDate = new DateTime(year, month, noOfDaysInMonth);
+                months[monthIdx].ActiveMonth.Year = year;
+                months[monthIdx].ActiveMonth.Month = month;
+                months[monthIdx].ContextMenuStrip = cMenu;
+                months[monthIdx].ShowToday = true;
+                months[monthIdx].FirstDayOfWeek = 2;
+                months[monthIdx].DayGotFocus += DayGotFocus;
+                months[monthIdx].DayLostFocus += DayLostFocus;
+                months[monthIdx].Header.BackColor1 = SystemColors.ActiveCaption;
+                months[monthIdx].Header.TextColor = Color.Black;
+                months[monthIdx].KeyboardEnabled = false;
+                months[monthIdx].Weekdays.BackColor1 = SystemColors.ActiveCaption;
+                months[monthIdx].Weekdays.TextColor = Color.Black;
+                months[monthIdx].Month.Colors.BackColor1 = SystemColors.ActiveCaption;
+                months[monthIdx].Month.Colors.Days.Text = Color.Black;
+                months[monthIdx].Month.Colors.Days.BackColor1 = SystemColors.ActiveCaption;
             }
         }
 
         public YearCalendar()
         {
-            var year = DateTime.Today.Year;
             var googleOptions = new GoogleOptions()
             {
                 ApplicationName = ApplicationName,
@@ -99,28 +99,35 @@ namespace ICalendar
             cMenu.Items.Clear();
             cMenu.Items.Add("Add event");
             cMenu.Items.Add("Remove event");
+            cMenu.Items.Add("Edit event");
             cMenu.ItemClicked += new ToolStripItemClickedEventHandler(cMenu_EventClicked);
             e.Cancel = false;
         }
 
-        void ClearDates()
-        {
-            for (int monthIdx = 1; monthIdx <= months.Length; monthIdx++)
-            {
-                months[monthIdx - 1].ResetDateInfo();
-            }
-        }
-
         internal void AddEventsToMonths()
         {
-            eventImporter.RefreshEvents(year);
+            eventImporter.RefreshEvents(months[0].MinDate, months[11].MaxDate);
 
-            var dateItems = new Dictionary<DateItem, int>();
+            var dateItems = new List<DateItem>();
+
+            //var holidayText = string.Empty;
+
+            //foreach(var kvp in eventImporter.CommittedHolidayDaysPerYear)
+            //{
+            //    holidayText += $" Taken {kvp.Value} in year {kvp.Key}";
+            //}
+
+            //holidayDays.Text = holidayText;
 
             foreach (var ev in eventImporter.Events)
             {
                 var startTime = ev.StartDate;
-                var endTime = ev.EndDate;
+                var endTime = ev.EndDate.AddMinutes(-1);
+
+                if (endTime.Subtract(startTime).Days > 100)
+                {
+                    throw new NullReferenceException($"Dates: {startTime} and {endTime}");
+                }
 
                 if (startTime != null && endTime != null)
                 {
@@ -129,109 +136,131 @@ namespace ICalendar
 
                     do
                     {
-                        var monthIdx = currentDate.Month-1;
                         var dtItem = new DateItem();
                         dtItem.Date = currentDate;
                         dtItem.BackColor1 = eventColor;
                         dtItem.Enabled = true;
                         currentDate = currentDate.AddDays(1);
-                        dateItems.Add(dtItem, monthIdx);
-                    } while (currentDate.AddMinutes(1) <= endTime);
+                        dateItems.Add(dtItem);
+                    } while (currentDate.Date <= endTime.Date);
                 }
             }
 
-            for(int i=0 ; i<months.Length; i++) 
+            Parallel.ForEach(months, month =>
             {
-                months[i].AddDateInfo(dateItems.Where(kvp=> kvp.Value==i).Select(kvp=> kvp.Key).ToArray());
-            }            
-        }
+                month.ResetDateInfo();
+                month.AddDateInfo(dateItems.Where(item => item.Date.Month == month.MinDate.Month).ToArray());
+            });
 
-        private Color ConvertToColor(string colorString)
+            Invalidate(true);        
+    }
+
+    private Color ConvertToColor(string colorString)
+    {
+        Color rgbColor = Color.White;
+        colorString = colorString.Trim('#');
+
+        var splitString = Enumerable.Range(0, colorString.Length / 2)
+                .Select(i => colorString.Substring(i * 2, 2));
+
+        var splitInts = splitString.Select(item => int.Parse(item, System.Globalization.NumberStyles.HexNumber)).ToArray();
+        rgbColor = Color.FromArgb(splitInts[0], splitInts[1], splitInts[2]);
+
+        return rgbColor;
+    }
+
+    private void RefreshEvents()
+    {
+        AddEventsToMonths();
+    }
+
+    private void DayGotFocus(object sender, DayEventArgs e)
+    {
+        var selectedDate = Convert.ToDateTime(e.Date);
+        var eventTitles = eventImporter.GetEventNamesForDay(selectedDate).ToList();
+        var tpText = String.Join(Environment.NewLine, eventTitles);
+
+        tp.BackColor = Color.LightYellow;
+        tp.Show(tpText, (sender as Pabo.Calendar.MonthCalendar), 3000);
+
+        (sender as Pabo.Calendar.MonthCalendar).SelectDate(selectedDate);
+    }
+
+    private void DayLostFocus(object sender, DayEventArgs e)
+    {
+        if (tp != null)
         {
-            Color rgbColor = Color.White;
-            colorString = colorString.Trim('#');
-
-            var splitString = Enumerable.Range(0, colorString.Length / 2)
-                    .Select(i => colorString.Substring(i * 2, 2));
-
-            var splitInts = splitString.Select(item => int.Parse(item, System.Globalization.NumberStyles.HexNumber)).ToArray();
-            rgbColor = Color.FromArgb(splitInts[0], splitInts[1], splitInts[2]);
-
-            return rgbColor;
+            tp.Hide((sender as Pabo.Calendar.MonthCalendar));
         }
+    }
 
-        private void RefreshEvents()
+    void cMenu_EventClicked(object sender, ToolStripItemClickedEventArgs e)
+    {
+        ToolStripItem menuItem = e.ClickedItem;
+        ContextMenuStrip menuStrip = menuItem.Owner as ContextMenuStrip;
+        Pabo.Calendar.MonthCalendar month = menuStrip.SourceControl as Pabo.Calendar.MonthCalendar;
+        SelectedDatesCollection selected = month.SelectedDates;
+
+        if (selected.Count == 0)
+            return;
+
+        switch (e.ClickedItem.Text)
         {
-            ClearDates();
-            AddEventsToMonths();
+            case "Add event":
+                AddEvent(selected);
+                break;
+            case "Remove event":
+                RemoveEvent(selected);
+                break;
+            case "Edit event":
+                EditEvent(selected);
+                break;
+            default:
+                break;
         }
+    }
 
-        private void DayGotFocus(object sender, DayEventArgs e)
+    private void RemoveEvent(SelectedDatesCollection selected)
+    {
+        var eventsOfTheDay = eventImporter.GetEventsForDay(selected[0]).ToArray();
+        EventList evList = new EventList(eventsOfTheDay);
+
+        if (evList.ShowDialog() == DialogResult.OK)
         {
-            var selectedDate = Convert.ToDateTime(e.Date);
-            var eventTitles = eventImporter.GetEventNamesForDay(selectedDate).ToList();
-            var tpText = String.Join(Environment.NewLine, eventTitles);
-
-            tp.BackColor = Color.LightYellow;
-            tp.Show(tpText, (sender as Pabo.Calendar.MonthCalendar), 3000);
-
-            (sender as Pabo.Calendar.MonthCalendar).SelectDate(selectedDate);
+            eventImporter.DeleteEvent(evList.ReturnedEvent.Id, evList.ReturnedEvent.CalendarId);
+            RefreshEvents();
         }
+    }
 
-        private void DayLostFocus(object sender, DayEventArgs e)
+    private void EditEvent(SelectedDatesCollection selected)
+    {
+        var eventsOfTheDay = eventImporter.GetEventsForDay(selected[0]).ToArray();
+        EventList evList = new EventList(eventsOfTheDay);
+
+        if (evList.ShowDialog() == DialogResult.OK)
         {
-            if (tp != null)
-            {
-                tp.Hide((sender as Pabo.Calendar.MonthCalendar));
-            }
-        }
-
-        void cMenu_EventClicked(object sender, ToolStripItemClickedEventArgs e)
-        {
-            ToolStripItem menuItem = e.ClickedItem;
-            ContextMenuStrip menuStrip = menuItem.Owner as ContextMenuStrip;
-            Pabo.Calendar.MonthCalendar month = menuStrip.SourceControl as Pabo.Calendar.MonthCalendar;
-            SelectedDatesCollection selected = month.SelectedDates;
-
-            if (selected.Count == 0)
-                return;
-
-            switch (e.ClickedItem.Text)
-            {
-                case "Add event":
-                    AddEvent(selected);
-                    break;
-                case "Remove event":
-                    RemoveEvent(selected);
-                    break;
-                default:
-                    break;
-            }
-        }
-
-        private void RemoveEvent(SelectedDatesCollection selected)
-        {
-            var eventsOfTheDay = eventImporter.GetEventsForDay(selected[0]).ToArray();
-            EventList evList = new EventList(eventsOfTheDay);
-
-            if (evList.ShowDialog() == DialogResult.OK)
-            {
-                eventImporter.DeleteEvent(evList.ReturnedEvent.Id, evList.ReturnedEvent.CalendarId);
-                RefreshEvents();
-            }
-        }
-
-        private void AddEvent(SelectedDatesCollection selected)
-        {
-            var evDescForm = new EventDescription(
-                selected[0],
-                selected[selected.Count-1], eventImporter.Calendars.ToArray());
+            var evDescForm = new EventDescription(evList.ReturnedEvent, eventImporter.Calendars.Where(x => x.Summary == evList.ReturnedEvent.Calendar).ToArray());
 
             if (evDescForm.ShowDialog() == DialogResult.OK)
             {
-                eventImporter.AddEvent(evDescForm.ReturnedEvent);
+                eventImporter.EditEvent(evDescForm.ReturnedEvent, evList.ReturnedEvent.Id, evList.ReturnedEvent.CalendarId);
                 RefreshEvents();
             }
         }
     }
+
+
+    private void AddEvent(SelectedDatesCollection selected)
+    {
+        var evDescForm = new EventDescription(
+            selected[0],
+            selected[selected.Count - 1], eventImporter.Calendars.ToArray());
+
+        if (evDescForm.ShowDialog() == DialogResult.OK)
+        {
+            eventImporter.AddEvent(evDescForm.ReturnedEvent);
+            RefreshEvents();
+        }
+    }
+}
 }

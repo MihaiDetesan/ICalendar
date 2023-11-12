@@ -14,13 +14,13 @@ namespace ICalendar
 {
     public class GoogleCalendarImporter
     {
+        private static  List<string> vacationWords = new List<string> { "concediu", "vacanta", "vacation" };
         private string[] Scopes = {
         CalendarService.Scope.CalendarEvents,
         CalendarService.Scope.CalendarReadonly
         };
 
         private readonly GoogleOptions options;
-
         private CalendarService calendarService;
 
         public GoogleCalendarImporter(GoogleOptions options)
@@ -41,14 +41,22 @@ namespace ICalendar
 
         public IList<EventDay> Events { get; private set; }
         public IList<CalendarListEntry> Calendars { get; private set; }
+        public Dictionary<int, int> CommittedHolidayDaysPerYear = new Dictionary<int, int>();
 
-
-        public void RefreshEvents(int year)
+        public void RefreshEvents(DateTime startTime, DateTime endTime)
         {
-            RefreshCalendars(calendarService, year);
-            Events = GetEventsFromGoogle(calendarService, year);
+            CommittedHolidayDaysPerYear.Clear();
+            Calendars.Clear();
+            Events.Clear();
+
+            GetCalendarsFromGoogle(calendarService);
+            Events = GetEventsFromGoogle(calendarService, startTime, endTime);
         }
 
+        /// <summary>
+        /// Add event to calndar.
+        /// </summary>
+        /// <param name="event"></param>
         public void AddEvent(EventDay @event)
         {
             var googleEvent = new Event()
@@ -59,7 +67,7 @@ namespace ICalendar
                 },
                 End = new EventDateTime
                 {
-                    Date = @event.EndDate.ToString("yyyy-MM-dd")
+                    Date = @event.EndDate.AddMinutes(1).ToString("yyyy-MM-dd")
                 },
                 Summary = @event.Description,
                 Description = @event.Description,
@@ -68,30 +76,99 @@ namespace ICalendar
             calendarService.Events.Insert(googleEvent, @event.CalendarId).Execute();
         }
 
+        /// <summary>
+        /// Delete event from calendar.
+        /// </summary>
+        /// <param name="eventId"></param>
+        /// <param name="calendarId"></param>
         public void DeleteEvent(string eventId, string calendarId)
         {
             calendarService.Events.Delete(calendarId, eventId).Execute();
         }
 
+        /// <summary>
+        /// Update event in calendar.
+        /// </summary>
+        /// <param name="event"></param>
+        /// <param name="eventId"></param>
+        /// <param name="calendarId"></param>
+        public void EditEvent(EventDay @event, string eventId, string calendarId)
+        {
+            var googleEvent = new Event()
+            {
+                Start = new EventDateTime
+                {
+                    Date = @event.StartDate.ToString("yyyy-MM-dd")
+                },
+                End = new EventDateTime
+                {
+                    Date = @event.EndDate.AddMinutes(1).ToString("yyyy-MM-dd")
+                },
+                Summary = @event.Description,
+                Description = @event.Description,
+            };
+
+            calendarService.Events.Update(googleEvent, calendarId, eventId).Execute();
+        }
+
+        /// <summary>
+        /// Get event names for a single day.
+        /// </summary>
+        /// <param name="selectedDate"></param>
+        /// <returns></returns>
         public IEnumerable<string> GetEventNamesForDay(DateTime selectedDate) =>
             Events.Where(ev =>
             {
                 return (ev.StartDate <= selectedDate.Date && selectedDate.Date <= ev.EndDate) ? true : false;
             }).Select(ev => ev.Description);
 
+        /// <summary>
+        /// Get events for a day.
+        /// </summary>
+        /// <param name="selectedDate"></param>
+        /// <returns></returns>
         public IEnumerable<EventDay> GetEventsForDay(DateTime selectedDate) =>
         Events.Where(ev =>
         {
             return (ev.StartDate <= selectedDate.Date && selectedDate.Date < ev.EndDate) ? true : false;
         });
 
+        /// <summary>
+        /// Get events from Google within a start adn end date.
+        /// </summary>
+        /// <param name="calendarName"></param>
+        /// <param name="service"></param>
+        /// <param name="startTime"></param>
+        /// <param name="endTime"></param>
+        /// <returns></returns>
+        private static Events GetEventsFromCalendar(string calendarName, CalendarService service, DateTime startTime, DateTime endTime)    
+        {
+            EventsResource.ListRequest request;
 
-        public void RefreshCalendars(CalendarService calendarService, int year)
+            request = service.Events.List(calendarName);
+            request.TimeMin = startTime;
+            request.TimeMax = endTime;
+            request.SingleEvents = true;
+            request.MaxResults = 1000;
+            return request.Execute();
+        }
+
+        /// <summary>
+        /// Gets calendars from Google.
+        /// </summary>
+        /// <param name="calendarService"></param>
+        private void GetCalendarsFromGoogle(CalendarService calendarService)
         {
             Calendars = calendarService.CalendarList.List().Execute().Items;
         }
 
-        internal UserCredential CreateCredentials(string credentialsPath, string tokenPath)
+        /// <summary>
+        /// Create credentials for goolge access.
+        /// </summary>
+        /// <param name="credentialsPath"></param>
+        /// <param name="tokenPath"></param>
+        /// <returns></returns>
+        private UserCredential CreateCredentials(string credentialsPath, string tokenPath)
         {
             UserCredential credentials = null;
             using (var stream =
@@ -109,7 +186,13 @@ namespace ICalendar
 
             return credentials;
         }
-        internal CalendarService GetCalendarService(UserCredential credentials)
+
+        /// <summary>
+        /// Gets the calendar service.
+        /// </summary>
+        /// <param name="credentials"></param>
+        /// <returns></returns>
+        private CalendarService GetCalendarService(UserCredential credentials)
         {
             if (credentials == null)
                 return null;
@@ -127,46 +210,57 @@ namespace ICalendar
         /// Get all events from Google from all calendars.
         /// </summary>
         /// 
-        internal IList<EventDay> GetEventsFromGoogle(CalendarService calendarService, int year)
+        private IList<EventDay> GetEventsFromGoogle(CalendarService calendarService, DateTime startTime, DateTime endTime)
         {
             var events = new List<EventDay>();
 
             foreach (var cal in Calendars)
             {
-                var startDate = new DateTime(year, 1, 1);
-                var endDate = new DateTime(year, 12, 31);
-
-                var eventsInCalendar = GetEventsFromCalendar(cal.Id, calendarService, startDate, endDate).Items;
+                var eventsInCalendar = GetEventsFromCalendar(cal.Id, calendarService, startTime, endTime).Items;
 
                 foreach (var ev in eventsInCalendar)
                 {
-                    events.Add(new EventDay()
+                    try
                     {
-                        Id = ev.Id,
-                        Calendar = cal.Summary,
-                        CalendarBkColor = cal.BackgroundColor,
-                        CalendarId= cal.Id,
-                        Description = ev.Summary,
-                        StartDate = DateTime.Parse(ev.Start.Date),
-                        EndDate = DateTime.Parse(ev.End.Date),                        
-                    });
+                        var eventDay = new EventDay()
+                        {
+                            Id = ev.Id,
+                            Calendar = cal.Summary,
+                            CalendarBkColor = cal.BackgroundColor,
+                            CalendarId = cal.Id,
+                            Description = ev.Summary,
+                            StartDate = DateTime.Parse(ev.Start.Date),
+                            EndDate = DateTime.Parse(ev.End.Date),
+                        };
+
+                        events.Add(eventDay);                        
+                        
+                        if (vacationWords.Any(s=> eventDay.Description.IndexOf(s,StringComparison.InvariantCultureIgnoreCase) !=-1))
+                        {
+                            if (CommittedHolidayDaysPerYear.ContainsKey(eventDay.StartDate.Year))
+                            {
+                                CommittedHolidayDaysPerYear[eventDay.StartDate.Year]+=(eventDay.EndDate - eventDay.StartDate).Days;
+                            }
+                            else
+                            {
+                                CommittedHolidayDaysPerYear[eventDay.StartDate.Year] = (eventDay.EndDate - eventDay.StartDate).Days;
+                            }
+                        }
+                    }
+                    catch (Exception)
+                    {
+                        Console.WriteLine($"Id:{ev.Id}");
+                        Console.WriteLine($"StartDate:{ev.Start.Date}");
+                        Console.WriteLine($"EndDate:{ev.End.Date}");
+                        Console.WriteLine($"Description:{ev.Summary}");
+                    }
                 }
             }
 
             return events;
         }
 
-        internal static Events GetEventsFromCalendar(string calendarName, CalendarService service, DateTime startTime, DateTime endTime)
-        {
-            EventsResource.ListRequest request;
 
-            request = service.Events.List(calendarName);
-            request.TimeMin = startTime;
-            request.TimeMax = endTime;
-            request.SingleEvents = true;
-            request.MaxResults = 1000;
-            return request.Execute();
-        }
     }
 }
 

@@ -27,21 +27,35 @@ namespace ICalendar
                 EndDate = endDate,
             };
 
-            objToGui();
+            objToGui(tempEvent);
+        }
+
+        public EventDescription(EventDay @event, CalendarListEntry[] calendars)
+        {
+            InitializeComponent();
+
+            comboCalendars.Items.AddRange(calendars);
+            comboCalendars.DisplayMember = "Summary";
+            comboCalendars.ValueMember = "Id";
+            if (calendars.Length > 0)
+                comboCalendars.SelectedIndex = 0;
+
+            objToGui(@event);
         }
 
         private void guiToObj()
         {
+            tempEvent = new EventDay();
             tempEvent.Description = textTitle.Text;
             tempEvent.StartDate = dateTimeStart.Value;
-            tempEvent.EndDate = dateTimeEnd.Value;
+            tempEvent.EndDate = dateTimeEnd.Value.AddMinutes(1);
             tempEvent.CalendarId = (comboCalendars.SelectedItem as CalendarListEntry).Id;
         }
-        private void objToGui()
+        private void objToGui(EventDay @event)
         {
-            textTitle.Text = tempEvent.Description;
-            dateTimeStart.Value = tempEvent.StartDate;
-            dateTimeEnd.Value = tempEvent.EndDate;
+            textTitle.Text = @event.Description;
+            dateTimeStart.Value = @event.StartDate;
+            dateTimeEnd.Value = @event.EndDate;
         }
         private void okButton_Click(object sender, EventArgs e)
         {
