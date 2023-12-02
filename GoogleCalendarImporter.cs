@@ -14,10 +14,10 @@ namespace ICalendar
 {
     public class GoogleCalendarImporter
     {
-        private static  List<string> vacationWords = new List<string> { "concediu", "vacanta", "vacation" };
         private string[] Scopes = {
         CalendarService.Scope.CalendarEvents,
-        CalendarService.Scope.CalendarReadonly
+        CalendarService.Scope.CalendarReadonly,
+        CalendarService.Scope.Calendar
         };
 
         private readonly GoogleOptions options;
@@ -214,7 +214,7 @@ namespace ICalendar
         {
             var events = new List<EventDay>();
 
-            foreach (var cal in Calendars)
+            foreach (var cal in Calendars.Where(x=>x.Selected==true))
             {
                 var eventsInCalendar = GetEventsFromCalendar(cal.Id, calendarService, startTime, endTime).Items;
 
@@ -235,17 +235,17 @@ namespace ICalendar
 
                         events.Add(eventDay);                        
                         
-                        if (vacationWords.Any(s=> eventDay.Description.IndexOf(s,StringComparison.InvariantCultureIgnoreCase) !=-1))
-                        {
-                            if (CommittedHolidayDaysPerYear.ContainsKey(eventDay.StartDate.Year))
-                            {
-                                CommittedHolidayDaysPerYear[eventDay.StartDate.Year]+=(eventDay.EndDate - eventDay.StartDate).Days;
-                            }
-                            else
-                            {
-                                CommittedHolidayDaysPerYear[eventDay.StartDate.Year] = (eventDay.EndDate - eventDay.StartDate).Days;
-                            }
-                        }
+                        //if (vacationWords.Any(s=> eventDay.Description.IndexOf(s,StringComparison.InvariantCultureIgnoreCase) !=-1))
+                        //{
+                        //    if (CommittedHolidayDaysPerYear.ContainsKey(eventDay.StartDate.Year))
+                        //    {
+                        //        CommittedHolidayDaysPerYear[eventDay.StartDate.Year]+=(eventDay.EndDate - eventDay.StartDate).Days;
+                        //    }
+                        //    else
+                        //    {
+                        //        CommittedHolidayDaysPerYear[eventDay.StartDate.Year] = (eventDay.EndDate - eventDay.StartDate).Days;
+                        //    }
+                        //}
                     }
                     catch (Exception)
                     {
@@ -260,7 +260,17 @@ namespace ICalendar
             return events;
         }
 
+        internal void ChageSelectStatus(string text, bool isChecked)
+        {
+            var calendarToChange = calendarService.CalendarList.List().Execute().Items.First(x => x.Summary.Equals(text));
 
+            if (calendarToChange != null) 
+            {
+
+                calendarToChange.Selected = isChecked;
+                calendarService.CalendarList.Update(calendarToChange, calendarToChange.Id).Execute();
+            }
+        }
     }
 }
 

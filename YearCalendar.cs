@@ -4,7 +4,9 @@ using System.Drawing;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using Google.Apis.Calendar.v3.Data;
 using Pabo.Calendar;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement.Button;
 
 
 namespace ICalendar
@@ -16,6 +18,7 @@ namespace ICalendar
         private GoogleCalendarImporter eventImporter;
         const int MonthsInAYear = 12;
         Pabo.Calendar.MonthCalendar[] months;
+        List<System.Windows.Forms.CheckBox> selectedCalendars;
 
         const string CredentialsPath = "./credentials.json";
         const string TokenPath = "./token.json";
@@ -68,6 +71,9 @@ namespace ICalendar
                 months[monthIdx].Month.Colors.Days.Text = Color.Black;
                 months[monthIdx].Month.Colors.Days.BackColor1 = SystemColors.ActiveCaption;
             }
+
+            //calendarsPanel.Dock = DockStyle.Fill;
+            selectedCalendars = new List<System.Windows.Forms.CheckBox>();
         }
 
         public YearCalendar()
@@ -106,8 +112,6 @@ namespace ICalendar
 
         internal void AddEventsToMonths()
         {
-            eventImporter.RefreshEvents(months[0].MinDate, months[11].MaxDate);
-
             var dateItems = new List<DateItem>();
 
             //var holidayText = string.Empty;
@@ -152,115 +156,148 @@ namespace ICalendar
                 month.AddDateInfo(dateItems.Where(item => item.Date.Month == month.MinDate.Month).ToArray());
             });
 
-            Invalidate(true);        
-    }
-
-    private Color ConvertToColor(string colorString)
-    {
-        Color rgbColor = Color.White;
-        colorString = colorString.Trim('#');
-
-        var splitString = Enumerable.Range(0, colorString.Length / 2)
-                .Select(i => colorString.Substring(i * 2, 2));
-
-        var splitInts = splitString.Select(item => int.Parse(item, System.Globalization.NumberStyles.HexNumber)).ToArray();
-        rgbColor = Color.FromArgb(splitInts[0], splitInts[1], splitInts[2]);
-
-        return rgbColor;
-    }
-
-    private void RefreshEvents()
-    {
-        AddEventsToMonths();
-    }
-
-    private void DayGotFocus(object sender, DayEventArgs e)
-    {
-        var selectedDate = Convert.ToDateTime(e.Date);
-        var eventTitles = eventImporter.GetEventNamesForDay(selectedDate).ToList();
-        var tpText = String.Join(Environment.NewLine, eventTitles);
-
-        tp.BackColor = Color.LightYellow;
-        tp.Show(tpText, (sender as Pabo.Calendar.MonthCalendar), 3000);
-
-        (sender as Pabo.Calendar.MonthCalendar).SelectDate(selectedDate);
-    }
-
-    private void DayLostFocus(object sender, DayEventArgs e)
-    {
-        if (tp != null)
-        {
-            tp.Hide((sender as Pabo.Calendar.MonthCalendar));
+            Invalidate(true);
         }
-    }
 
-    void cMenu_EventClicked(object sender, ToolStripItemClickedEventArgs e)
-    {
-        ToolStripItem menuItem = e.ClickedItem;
-        ContextMenuStrip menuStrip = menuItem.Owner as ContextMenuStrip;
-        Pabo.Calendar.MonthCalendar month = menuStrip.SourceControl as Pabo.Calendar.MonthCalendar;
-        SelectedDatesCollection selected = month.SelectedDates;
-
-        if (selected.Count == 0)
-            return;
-
-        switch (e.ClickedItem.Text)
+        private Color ConvertToColor(string colorString)
         {
-            case "Add event":
-                AddEvent(selected);
-                break;
-            case "Remove event":
-                RemoveEvent(selected);
-                break;
-            case "Edit event":
-                EditEvent(selected);
-                break;
-            default:
-                break;
+            Color rgbColor = Color.White;
+            colorString = colorString.Trim('#');
+
+            var splitString = Enumerable.Range(0, colorString.Length / 2)
+                    .Select(i => colorString.Substring(i * 2, 2));
+
+            var splitInts = splitString.Select(item => int.Parse(item, System.Globalization.NumberStyles.HexNumber)).ToArray();
+            rgbColor = Color.FromArgb(splitInts[0], splitInts[1], splitInts[2]);
+
+            return rgbColor;
         }
-    }
 
-    private void RemoveEvent(SelectedDatesCollection selected)
-    {
-        var eventsOfTheDay = eventImporter.GetEventsForDay(selected[0]).ToArray();
-        EventList evList = new EventList(eventsOfTheDay);
-
-        if (evList.ShowDialog() == DialogResult.OK)
+        private void RefreshEvents()
         {
-            eventImporter.DeleteEvent(evList.ReturnedEvent.Id, evList.ReturnedEvent.CalendarId);
-            RefreshEvents();
+            eventImporter.RefreshEvents(months[0].MinDate, months[11].MaxDate);
+
+            AddSelectedCalendars(eventImporter.Calendars);
+            AddEventsToMonths();
         }
-    }
 
-    private void EditEvent(SelectedDatesCollection selected)
-    {
-        var eventsOfTheDay = eventImporter.GetEventsForDay(selected[0]).ToArray();
-        EventList evList = new EventList(eventsOfTheDay);
-
-        if (evList.ShowDialog() == DialogResult.OK)
+        private void AddSelectedCalendars(IList<CalendarListEntry> calendars)
         {
-            var evDescForm = new EventDescription(evList.ReturnedEvent, eventImporter.Calendars.Where(x => x.Summary == evList.ReturnedEvent.Calendar).ToArray());
+            selectedCalendars.Clear();
+            int checkboxHeight = calendarsPanel.Height / calendars.Count;
 
-            if (evDescForm.ShowDialog() == DialogResult.OK)
+            foreach (var calendar in calendars) 
             {
-                eventImporter.EditEvent(evDescForm.ReturnedEvent, evList.ReturnedEvent.Id, evList.ReturnedEvent.CalendarId);
+                var calendarCheckBox = new System.Windows.Forms.CheckBox()
+                {
+                    Text = calendar.Summary,
+                    Checked = calendar.Selected ?? false,
+                    Dock = DockStyle.Top,
+                    Height = checkboxHeight,
+                };
+
+                calendarCheckBox.CheckedChanged += (sender, eventArgs) =>
+                {
+                    eventImporter.ChageSelectStatus(
+                        (sender as System.Windows.Forms.CheckBox).Text, 
+                        (sender as System.Windows.Forms.CheckBox).Checked);
+
+                    RefreshEvents();
+                };
+
+                selectedCalendars.Add(calendarCheckBox);
+                calendarsPanel.Controls.Add(calendarCheckBox);
+            }
+        }
+
+        private void DayGotFocus(object sender, DayEventArgs e)
+        {
+            var selectedDate = Convert.ToDateTime(e.Date);
+            var eventTitles = eventImporter.GetEventNamesForDay(selectedDate).ToList();
+            var tpText = String.Join(Environment.NewLine, eventTitles);
+
+            tp.BackColor = Color.LightYellow;
+            tp.Show(tpText, (sender as Pabo.Calendar.MonthCalendar), 3000);
+
+            (sender as Pabo.Calendar.MonthCalendar).SelectDate(selectedDate);
+        }
+
+        private void DayLostFocus(object sender, DayEventArgs e)
+        {
+            if (tp != null)
+            {
+                tp.Hide((sender as Pabo.Calendar.MonthCalendar));
+            }
+        }
+
+        void cMenu_EventClicked(object sender, ToolStripItemClickedEventArgs e)
+        {
+            ToolStripItem menuItem = e.ClickedItem;
+            ContextMenuStrip menuStrip = menuItem.Owner as ContextMenuStrip;
+            Pabo.Calendar.MonthCalendar month = menuStrip.SourceControl as Pabo.Calendar.MonthCalendar;
+            SelectedDatesCollection selected = month.SelectedDates;
+
+            if (selected.Count == 0)
+                return;
+
+            switch (e.ClickedItem.Text)
+            {
+                case "Add event":
+                    AddEvent(selected);
+                    break;
+                case "Remove event":
+                    RemoveEvent(selected);
+                    break;
+                case "Edit event":
+                    EditEvent(selected);
+                    break;
+                default:
+                    break;
+            }
+        }
+
+        private void RemoveEvent(SelectedDatesCollection selected)
+        {
+            var eventsOfTheDay = eventImporter.GetEventsForDay(selected[0]).ToArray();
+            EventList evList = new EventList(eventsOfTheDay);
+
+            if (evList.ShowDialog() == DialogResult.OK)
+            {
+                eventImporter.DeleteEvent(evList.ReturnedEvent.Id, evList.ReturnedEvent.CalendarId);
                 RefreshEvents();
             }
         }
-    }
 
-
-    private void AddEvent(SelectedDatesCollection selected)
-    {
-        var evDescForm = new EventDescription(
-            selected[0],
-            selected[selected.Count - 1], eventImporter.Calendars.ToArray());
-
-        if (evDescForm.ShowDialog() == DialogResult.OK)
+        private void EditEvent(SelectedDatesCollection selected)
         {
-            eventImporter.AddEvent(evDescForm.ReturnedEvent);
-            RefreshEvents();
+            var eventsOfTheDay = eventImporter.GetEventsForDay(selected[0]).ToArray();
+            EventList evList = new EventList(eventsOfTheDay);
+
+            if (evList.ShowDialog() == DialogResult.OK)
+            {
+                var evDescForm = new EventDescription(evList.ReturnedEvent, eventImporter.Calendars.Where(x => x.Summary == evList.ReturnedEvent.Calendar).ToArray());
+
+                if (evDescForm.ShowDialog() == DialogResult.OK)
+                {
+                    eventImporter.EditEvent(evDescForm.ReturnedEvent, evList.ReturnedEvent.Id, evList.ReturnedEvent.CalendarId);
+                    RefreshEvents();
+                }
+            }
         }
+
+
+        private void AddEvent(SelectedDatesCollection selected)
+        {
+            var evDescForm = new EventDescription(
+                selected[0],
+                selected[selected.Count - 1], eventImporter.Calendars.ToArray());
+
+            if (evDescForm.ShowDialog() == DialogResult.OK)
+            {
+                eventImporter.AddEvent(evDescForm.ReturnedEvent);
+                RefreshEvents();
+            }
+        }
+
     }
-}
 }
