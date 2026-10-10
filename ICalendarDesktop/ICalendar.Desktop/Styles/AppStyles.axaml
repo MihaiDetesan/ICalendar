@@ -1,0 +1,134 @@
+<Styles xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+  <Style Selector="Window">
+    <Setter Property="Background" Value="#0F172A" />
+  </Style>
+
+  <Style Selector="Border.MonthCard">
+    <Setter Property="Background" Value="#1E293B" />
+    <Setter Property="CornerRadius" Value="14" />
+    <Setter Property="Padding" Value="14" />
+    <Setter Property="BoxShadow" Value="0 4 16 0 #30000000" />
+  </Style>
+
+  <Style Selector="TextBlock.MonthTitle">
+    <Setter Property="FontSize" Value="15" />
+    <Setter Property="FontWeight" Value="SemiBold" />
+    <Setter Property="Foreground" Value="#F8FAFC" />
+    <Setter Property="HorizontalAlignment" Value="Center" />
+  </Style>
+
+  <Style Selector="TextBlock.WeekdayHeader">
+    <Setter Property="FontSize" Value="10" />
+    <Setter Property="FontWeight" Value="Medium" />
+    <Setter Property="Foreground" Value="#64748B" />
+    <Setter Property="HorizontalAlignment" Value="Center" />
+  </Style>
+
+  <Style Selector="Button.DayCell">
+    <Setter Property="Background" Value="Transparent" />
+    <Setter Property="BorderThickness" Value="0" />
+    <Setter Property="CornerRadius" Value="8" />
+    <Setter Property="Padding" Value="2,4" />
+    <Setter Property="Margin" Value="1" />
+    <Setter Property="Width" Value="32" />
+    <Setter Property="Height" Value="32" />
+    <Setter Property="HorizontalContentAlignment" Value="Center" />
+    <Setter Property="VerticalContentAlignment" Value="Center" />
+  </Style>
+
+  <Style Selector="Button.DayCell:pointerover /template/ ContentPresenter">
+    <Setter Property="Background" Value="#334155" />
+  </Style>
+
+  <Style Selector="Button.DayCell:disabled">
+    <Setter Property="Opacity" Value="0.35" />
+  </Style>
+
+  <Style Selector="Border.SidebarPanel">
+    <Setter Property="Background" Value="#1E293B" />
+    <Setter Property="CornerRadius" Value="14" />
+    <Setter Property="Padding" Value="16" />
+  </Style>
+
+  <Style Selector="TextBlock.SectionHeader">
+    <Setter Property="FontSize" Value="13" />
+    <Setter Property="FontWeight" Value="SemiBold" />
+    <Setter Property="Foreground" Value="#94A3B8" />
+    <Setter Property="Margin" Value="0,0,0,8" />
+  </Style>
+
+  <Style Selector="TextBlock.AppTitle">
+    <Setter Property="FontSize" Value="22" />
+    <Setter Property="FontWeight" Value="Bold" />
+    <Setter Property="Foreground" Value="#F8FAFC" />
+  </Style>
+
+  <Style Selector="TextBlock.YearLabel">
+    <Setter Property="FontSize" Value="18" />
+    <Setter Property="FontWeight" Value="SemiBold" />
+    <Setter Property="Foreground" Value="#F8FAFC" />
+    <Setter Property="VerticalAlignment" Value="Center" />
+  </Style>
+
+  <Style Selector="Button.NavButton">
+    <Setter Property="Background" Value="#334155" />
+    <Setter Property="Foreground" Value="#F8FAFC" />
+    <Setter Property="CornerRadius" Value="8" />
+    <Setter Property="Padding" Value="10,6" />
+  </Style>
+
+  <Style Selector="Button.NavButton:pointerover /template/ ContentPresenter">
+    <Setter Property="Background" Value="#475569" />
+  </Style>
+
+  <Style Selector="Button.AccentButton">
+    <Setter Property="Background" Value="#6366F1" />
+    <Setter Property="Foreground" Value="White" />
+    <Setter Property="CornerRadius" Value="8" />
+    <Setter Property="Padding" Value="14,8" />
+    <Setter Property="FontWeight" Value="SemiBold" />
+  </Style>
+
+  <Style Selector="Button.AccentButton:pointerover /template/ ContentPresenter">
+    <Setter Property="Background" Value="#4F46E5" />
+  </Style>
+
+  <Style Selector="Button.DangerButton">
+    <Setter Property="Background" Value="#7F1D1D" />
+    <Setter Property="Foreground" Value="#FEE2E2" />
+    <Setter Property="CornerRadius" Value="8" />
+    <Setter Property="Padding" Value="10,6" />
+  </Style>
+
+  <Style Selector="Button.DangerButton:pointerover /template/ ContentPresenter">
+    <Setter Property="Background" Value="#991B1B" />
+  </Style>
+
+  <Style Selector="Button.GhostButton">
+    <Setter Property="Background" Value="Transparent" />
+    <Setter Property="Foreground" Value="#CBD5E1" />
+    <Setter Property="CornerRadius" Value="8" />
+    <Setter Property="Padding" Value="10,6" />
+  </Style>
+
+  <Style Selector="Button.GhostButton:pointerover /template/ ContentPresenter">
+    <Setter Property="Background" Value="#334155" />
+  </Style>
+
+  <Style Selector="TextBlock.StatusText">
+    <Setter Property="Foreground" Value="#94A3B8" />
+    <Setter Property="FontSize" Value="13" />
+  </Style>
+
+  <Style Selector="TextBlock.ErrorText">
+    <Setter Property="Foreground" Value="#F87171" />
+    <Setter Property="FontSize" Value="13" />
+  </Style>
+
+  <Style Selector="CheckBox.CalendarCheck">
+    <Setter Property="Foreground" Value="#E2E8F0" />
+    <Setter Property="Margin" Value="0,4" />
+  </Style>
+</Styles>

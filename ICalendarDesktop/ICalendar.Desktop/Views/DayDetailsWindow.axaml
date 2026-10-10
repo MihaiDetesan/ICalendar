@@ -1,0 +1,41 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="using:ICalendar.Desktop.ViewModels"
+        x:Class="ICalendar.Desktop.Views.DayDetailsWindow"
+        x:DataType="vm:DayDetailsViewModel"
+        Width="440" MinHeight="320" SizeToContent="Height"
+        CanResize="False"
+        WindowStartupLocation="CenterOwner"
+        Title="Day details">
+
+    <Border Padding="20">
+        <StackPanel Spacing="14">
+            <TextBlock Text="{Binding DateDisplay}" Classes="AppTitle" FontSize="18" />
+
+            <ItemsControl ItemsSource="{Binding Events}" Name="EventsList">
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate x:DataType="vm:EventRowViewModel">
+                        <Border Background="#1E293B" CornerRadius="10" Padding="12" Margin="0,0,0,8">
+                            <Grid ColumnDefinitions="Auto,*,Auto,Auto">
+                                <Ellipse Grid.Column="0" Width="10" Height="10" Fill="{Binding Color}" VerticalAlignment="Center" Margin="0,0,10,0" />
+                                <StackPanel Grid.Column="1" Spacing="2">
+                                    <TextBlock Text="{Binding Description}" Foreground="#F8FAFC" FontWeight="Medium" TextWrapping="Wrap" />
+                                    <TextBlock Text="{Binding Calendar}" Classes="StatusText" FontSize="11" />
+                                </StackPanel>
+                                <Button Grid.Column="2" Classes="GhostButton" Content="Edit" Tag="{Binding}" Click="OnEditClicked" Margin="0,0,4,0" />
+                                <Button Grid.Column="3" Classes="DangerButton" Content="Delete" Tag="{Binding}" Click="OnDeleteClicked" />
+                            </Grid>
+                        </Border>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+
+            <TextBlock Text="No events on this day." Classes="StatusText" IsVisible="{Binding !HasEvents}" HorizontalAlignment="Center" Margin="0,10" />
+
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Spacing="8" Margin="0,8,0,0">
+                <Button Classes="GhostButton" Content="Close" Click="OnCloseClicked" />
+                <Button Classes="AccentButton" Content="+ Add event" Click="OnAddClicked" />
+            </StackPanel>
+        </StackPanel>
+    </Border>
+</Window>

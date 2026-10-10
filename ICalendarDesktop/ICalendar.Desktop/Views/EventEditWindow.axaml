@@ -1,0 +1,56 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="using:ICalendar.Desktop.ViewModels"
+        xmlns:conv="using:Avalonia.Data.Converters"
+        x:Class="ICalendar.Desktop.Views.EventEditWindow"
+        x:DataType="vm:EventEditViewModel"
+        Width="420" SizeToContent="Height"
+        CanResize="False"
+        WindowStartupLocation="CenterOwner"
+        Title="{Binding Title}">
+
+    <Border Padding="20">
+        <StackPanel Spacing="12">
+            <TextBlock Text="{Binding Title}" Classes="AppTitle" FontSize="18" />
+
+            <StackPanel Spacing="4">
+                <TextBlock Text="Description" Classes="SectionHeader" Margin="0" />
+                <TextBox Text="{Binding Description}" Watermark="What's happening?" />
+            </StackPanel>
+
+            <StackPanel Spacing="4">
+                <TextBlock Text="Calendar" Classes="SectionHeader" Margin="0" />
+                <ComboBox ItemsSource="{Binding AvailableCalendars}"
+                          SelectedItem="{Binding SelectedCalendar}"
+                          HorizontalAlignment="Stretch">
+                    <ComboBox.ItemTemplate>
+                        <DataTemplate x:DataType="vm:CalendarItemViewModel">
+                            <StackPanel Orientation="Horizontal" Spacing="8">
+                                <Ellipse Width="10" Height="10" Fill="{Binding Color}" VerticalAlignment="Center" />
+                                <TextBlock Text="{Binding Summary}" VerticalAlignment="Center" />
+                            </StackPanel>
+                        </DataTemplate>
+                    </ComboBox.ItemTemplate>
+                </ComboBox>
+            </StackPanel>
+
+            <Grid ColumnDefinitions="*,*">
+                <StackPanel Grid.Column="0" Spacing="4" Margin="0,0,5,0">
+                    <TextBlock Text="Start date" Classes="SectionHeader" Margin="0" />
+                    <CalendarDatePicker SelectedDate="{Binding StartDate}" HorizontalAlignment="Stretch" />
+                </StackPanel>
+                <StackPanel Grid.Column="1" Spacing="4" Margin="5,0,0,0">
+                    <TextBlock Text="End date" Classes="SectionHeader" Margin="0" />
+                    <CalendarDatePicker SelectedDate="{Binding EndDate}" HorizontalAlignment="Stretch" />
+                </StackPanel>
+            </Grid>
+
+            <TextBlock Text="{Binding ErrorMessage}" Classes="ErrorText" IsVisible="{Binding ErrorMessage, Converter={x:Static conv:StringConverters.IsNotNullOrEmpty}}" />
+
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Spacing="8" Margin="0,8,0,0">
+                <Button Classes="GhostButton" Content="Cancel" Click="OnCancelClicked" />
+                <Button Classes="AccentButton" Content="Save" Click="OnSaveClicked" />
+            </StackPanel>
+        </StackPanel>
+    </Border>
+</Window>

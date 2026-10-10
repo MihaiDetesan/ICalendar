@@ -1,0 +1,81 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="using:ICalendar.Desktop.ViewModels"
+        xmlns:views="using:ICalendar.Desktop.Views"
+        xmlns:conv="using:Avalonia.Data.Converters"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d" d:DesignWidth="1400" d:DesignHeight="900"
+        x:Class="ICalendar.Desktop.Views.MainWindow"
+        x:DataType="vm:MainViewModel"
+        Width="1400" Height="900"
+        Icon="/Assets/calendar-icon.png"
+        Title="ICalendar">
+
+    <Design.DataContext>
+        <vm:MainViewModel />
+    </Design.DataContext>
+
+    <Grid ColumnDefinitions="260,*" Margin="20">
+
+        <!-- Sidebar -->
+        <Border Grid.Column="0" Classes="SidebarPanel" Margin="0,0,16,0">
+            <DockPanel>
+                <StackPanel DockPanel.Dock="Top" Spacing="4" Margin="0,0,0,20">
+                    <TextBlock Text="ICalendar" Classes="AppTitle" />
+                    <TextBlock Text="Google Calendar, at a glance" Classes="StatusText" />
+                </StackPanel>
+
+                <StackPanel DockPanel.Dock="Bottom">
+                    <TextBlock Text="{Binding StatusMessage}" Classes="StatusText" TextWrapping="Wrap" IsVisible="{Binding StatusMessage, Converter={x:Static conv:StringConverters.IsNotNullOrEmpty}}" />
+                    <TextBlock Text="{Binding ErrorMessage}" Classes="ErrorText" TextWrapping="Wrap" Margin="0,4,0,0" IsVisible="{Binding ErrorMessage, Converter={x:Static conv:StringConverters.IsNotNullOrEmpty}}" />
+                </StackPanel>
+
+                <StackPanel>
+                    <TextBlock Text="CALENDARS" Classes="SectionHeader" />
+                    <ItemsControl ItemsSource="{Binding Calendars}">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate x:DataType="vm:CalendarItemViewModel">
+                                <CheckBox Classes="CalendarCheck" IsChecked="{Binding IsSelected}">
+                                    <StackPanel Orientation="Horizontal" Spacing="8">
+                                        <Ellipse Width="10" Height="10" Fill="{Binding Color}" VerticalAlignment="Center" />
+                                        <TextBlock Text="{Binding Summary}" VerticalAlignment="Center" />
+                                    </StackPanel>
+                                </CheckBox>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </StackPanel>
+            </DockPanel>
+        </Border>
+
+        <!-- Main content -->
+        <Grid Grid.Column="1" RowDefinitions="Auto,*">
+
+            <Grid Grid.Row="0" ColumnDefinitions="Auto,Auto,Auto,*,Auto,Auto" Margin="0,0,0,16" VerticalAlignment="Center">
+                <Button Grid.Column="0" Classes="NavButton" Content="‹" Command="{Binding PreviousYearCommand}" />
+                <TextBlock Grid.Column="1" Text="{Binding DisplayYear}" Classes="YearLabel" Margin="12,0" />
+                <Button Grid.Column="2" Classes="NavButton" Content="›" Command="{Binding NextYearCommand}" />
+                <Button Grid.Column="4" Classes="GhostButton" Content="Today" Command="{Binding TodayCommand}" Margin="0,0,8,0" />
+                <Button Grid.Column="5" Classes="AccentButton" Content="Refresh" Command="{Binding RefreshCommand}" HorizontalAlignment="Right" />
+            </Grid>
+
+            <ScrollViewer Grid.Row="1">
+                <ItemsControl ItemsSource="{Binding Months}">
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <UniformGrid Columns="4" />
+                        </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate x:DataType="vm:MonthViewModel">
+                            <Border Margin="6">
+                                <views:MonthView />
+                            </Border>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+            </ScrollViewer>
+        </Grid>
+    </Grid>
+</Window>

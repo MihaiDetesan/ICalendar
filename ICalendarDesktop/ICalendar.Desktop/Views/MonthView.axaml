@@ -1,0 +1,59 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:ICalendar.Desktop.ViewModels"
+             x:Class="ICalendar.Desktop.Views.MonthView"
+             x:DataType="vm:MonthViewModel">
+
+  <Border Classes="MonthCard">
+    <StackPanel Spacing="6">
+      <TextBlock Text="{Binding MonthName}" Classes="MonthTitle" />
+
+      <Grid ColumnDefinitions="*,*,*,*,*,*,*" Margin="0,2,0,2">
+        <TextBlock Grid.Column="0" Text="M" Classes="WeekdayHeader" />
+        <TextBlock Grid.Column="1" Text="T" Classes="WeekdayHeader" />
+        <TextBlock Grid.Column="2" Text="W" Classes="WeekdayHeader" />
+        <TextBlock Grid.Column="3" Text="T" Classes="WeekdayHeader" />
+        <TextBlock Grid.Column="4" Text="F" Classes="WeekdayHeader" />
+        <TextBlock Grid.Column="5" Text="S" Classes="WeekdayHeader" />
+        <TextBlock Grid.Column="6" Text="S" Classes="WeekdayHeader" />
+      </Grid>
+
+      <ItemsControl ItemsSource="{Binding Days}">
+        <ItemsControl.ItemsPanel>
+          <ItemsPanelTemplate>
+            <UniformGrid Columns="7" />
+          </ItemsPanelTemplate>
+        </ItemsControl.ItemsPanel>
+        <ItemsControl.ItemTemplate>
+          <DataTemplate x:DataType="vm:DayCellViewModel">
+            <Button Classes="DayCell"
+                    Command="{Binding DayClickedCommand}"
+                    CommandParameter="{Binding}"
+                    IsEnabled="{Binding IsCurrentMonth}"
+                    Background="{Binding CellBackground}"
+                    ToolTip.Tip="{Binding ToolTipText}">
+              <StackPanel Spacing="2" HorizontalAlignment="Center">
+                <TextBlock Text="{Binding DayNumber}"
+                           HorizontalAlignment="Center"
+                           Foreground="{Binding NumberBrush}"
+                           FontWeight="{Binding NumberWeight}" />
+                <ItemsControl ItemsSource="{Binding EventDots}" HorizontalAlignment="Center">
+                  <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                      <StackPanel Orientation="Horizontal" Spacing="2" />
+                    </ItemsPanelTemplate>
+                  </ItemsControl.ItemsPanel>
+                  <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                      <Ellipse Width="5" Height="5" Fill="{Binding}" />
+                    </DataTemplate>
+                  </ItemsControl.ItemTemplate>
+                </ItemsControl>
+              </StackPanel>
+            </Button>
+          </DataTemplate>
+        </ItemsControl.ItemTemplate>
+      </ItemsControl>
+    </StackPanel>
+  </Border>
+</UserControl>
